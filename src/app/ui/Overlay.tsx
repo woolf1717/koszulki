@@ -14,7 +14,8 @@ import { Logo } from "@pmndrs/branding";
 import { ModalDialog } from "./ModalDialog";
 import { state } from "./store";
 import { useSnapshot } from "valtio";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { DecalStateContext } from "./decalStateContext";
 
 export function Overlay() {
   const snap = useSnapshot(state);
@@ -110,33 +111,13 @@ export function Overlay() {
 }
 
 function Customizer() {
+  const { decals, setSelectedDecal } = useContext(DecalStateContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [snap, setSnap] = useState(state);
-  const [tumbnails, setTumbnails] = useState([]);
-
-  const handleDisplayList = async () => {
-    const list = await getListAll();
-    console.log(list?.items.map((item) => item.name));
-  };
-
-  const handleGetBucket = async () => {
-    const bucket = await getAllBucket();
-    console.log(bucket);
-  };
-
-  const handleElementDownolad = async () => {
-    const element = await getBucketElement("DevYourWebBlack.png");
-
-    console.log(element);
-  };
 
   return (
     <div className="customizer">
       <div className="color-options ">
-        <div onClick={() => console.log(snap)}>SHOW STATE</div>
-        <div onClick={handleDisplayList}>GetList</div>
-        <div onClick={handleElementDownolad}>Download</div>
-        <div onClick={handleGetBucket}>GetBucket</div>
         {snap.colors.map((color) => (
           <div
             key={color}
@@ -159,13 +140,16 @@ function Customizer() {
             setIsModalOpen={setIsModalOpen}
             setSnap={setSnap}
           />
-          {snap.decals.map((decal) => (
+          {decals.map((decal) => (
             <div
-              key={decal}
+              key={decal.uuid}
               className={`decal `}
-              onClick={() => (state.decal = decal)}
+              onClick={() => {
+                setSelectedDecal(decal.name);
+              }}
+              // onClick={() => (state.decal = decal.uuid)}
             >
-              <img src={decal + "_thumb.png"} alt="brand" />
+              <img src={decal.thumbnailLink} alt="brand" />
             </div>
           ))}
         </div>

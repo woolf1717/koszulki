@@ -9,6 +9,7 @@ import { addDoc, collection } from "firebase/firestore";
 import { db, storageRef } from "./firebaseconfig";
 
 import { v4 as uuidv4 } from "uuid";
+import { resizeImageFile, stripFileNameFromExtension } from "./utils";
 
 export const getListAll = async (): Promise<ListResult | null> => {
   try {
@@ -16,8 +17,6 @@ export const getListAll = async (): Promise<ListResult | null> => {
 
     return list;
   } catch (e) {
-    console.log(e);
-
     return null;
   }
 };
@@ -29,8 +28,6 @@ export const getBucketElement = async (elementName: string) => {
 
     return downloadURL;
   } catch (e) {
-    console.log(e);
-
     return null;
   }
 };
@@ -48,27 +45,29 @@ export const getAllBucket = async (): Promise<string[] | []> => {
 
     return itemsArray;
   } catch (e) {
-    console.log(e);
-
     return null;
   }
 };
 
-export const uploadImageToStorage = async (file: File): Promise<void> => {
-  console.log("upload file");
+export const uploadImageToStorage = async (
+  file: File
+): Promise<string | null> => {
   const uploadRef = ref(storageRef, file.name);
   try {
     const uploadTask = await uploadBytes(uploadRef, file);
-    console.log("uploadTask " + uploadTask.metadata);
+    return uploadTask.ref.fullPath;
   } catch (e) {
-    console.log(e);
+    return null;
   }
 };
 
 ///Storage
 
 export const createDecal = async (file: File) => {
-  console.log("createDecal");
+  // const list = await getListAll();
+  const UUID = uuidv4();
+  const thumbnailFile = await resizeImageFile(file);
+
   try {
     const defaultData = {
       uuid: uuidv4(),
@@ -76,22 +75,27 @@ export const createDecal = async (file: File) => {
       thumb_nail: "Default Thumbnail",
       image: "Default Image",
     };
+    const fileName = stripFileNameFromExtension(file.name);
+
+    const imageName = await uploadImageToStorage(file);
+    const thumbnailName = await uploadImageToStorage(thumbnailFile);
+
+    const imageReference = ref(storageRef, imageName || "");
+    const thumbnailReference = ref(storageRef, thumbnailName || "");
+
+    const imageLink = await getDownloadURL(imageReference);
+    const thumbnailLink = await getDownloadURL(thumbnailReference);
 
     const decalData = {
-      uuid: uuidv4(),
-      name: file.name || defaultData.name,
-      thumb_nail: "thumbnail link" || defaultData.thumb_nail,
-      image: "image link" || defaultData.image,
+      uuid: UUID,
+      name: fileName || defaultData.name,
+      image: imageLink || defaultData.image,
+      thumb_nail: thumbnailLink || defaultData.thumb_nail,
     };
-    await addDoc(collection(db, "decal"), decalData);
+
+    await addDoc(collection(db, "decals"), decalData);
     alert("Zdarzenie dodane pomyślnie");
   } catch (e) {
-    console.log(e);
     alert("Błąd dodawania zdarzenia");
   }
-  // Dostajemy plik i tworzymy decal
-  // Chcemy żeby decal miał nazwę, link z thumbnail image i z image
-  //Żeby dodać link z image musimy wrzucić image, a następnie odnależć link i umieścić go w API callu pod nazwą image
-  // Żeby to zrobić musimy wyeksrachować nazwe pliku i dodać ją do api calla
-  //Żeby dodać link z thumbnail musimy wrzucić thumbnail firebase storage a następnie odnaleźć link i umieścić go w API callu pod nazwą thumb_nail
 };

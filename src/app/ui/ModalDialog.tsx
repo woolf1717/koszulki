@@ -1,5 +1,5 @@
-import { DialogOption } from "./DialogOption";
-import { InputHandler } from "./InputHandler";
+import { DialogOption } from "./dialogOption";
+import { InputHandler } from "./inputHandler";
 
 export const ModalDialog = ({
   isOpen,

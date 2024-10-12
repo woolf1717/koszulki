@@ -1,4 +1,4 @@
-import { createDecal, uploadImageToStorage } from "../api";
+import { createDecal } from "../api";
 
 import { useState } from "react";
 
@@ -20,13 +20,10 @@ export const InputHandler = ({ setSnap }: { setSnap: (snap: any) => void }) => {
   };
 
   const handleUploadNewDesign = async (file: File) => {
-    console.log("handleUplowaNewDesign");
     if (!file) {
       return alert("Please select a file");
     } else {
       await createDecal(file);
-      console.log(file);
-      console.log("upload to state");
     }
   };
 

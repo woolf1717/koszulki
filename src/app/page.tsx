@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AppCanvas } from "./ui/AppCanvas";
-import { Overlay } from "./ui/Overlay";
+import { AppCanvas } from "./ui/appCanvas";
+import { Overlay } from "./ui/overlay";
 
 export default function Home() {
   const [isMounted, setIsMounted] = useState(false);

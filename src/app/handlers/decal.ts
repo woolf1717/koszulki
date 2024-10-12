@@ -9,7 +9,5 @@ export async function uploadDecal(file: File) {
   });
 
   const data = await response.json();
-  console.log("upload decal" + data.message);
-  // console.log(data.message);
   return data.message;
 }
