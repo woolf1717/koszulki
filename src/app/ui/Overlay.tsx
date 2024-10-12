@@ -11,13 +11,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { getAllBucket, getBucketElement, getListAll } from "../api";
 
 import { Logo } from "@pmndrs/branding";
-import { ModalDialog } from "./ModalDialog";
+import { ModalDialog } from "./modalDialog";
 import { state } from "./store";
 import { useSnapshot } from "valtio";
 import { useContext, useState } from "react";
 import { DecalStateContext } from "./decalStateContext";
+import { colorVariationList } from "../colorVariationList";
+import { ThemeContext } from "./themeContext";
 
 export function Overlay() {
+  const { theme } = useContext(ThemeContext);
   const snap = useSnapshot(state);
   const transition = { type: "spring", duration: 0.8 };
   const config = {
@@ -91,7 +94,7 @@ export function Overlay() {
                     own style.
                   </p>
                   <button
-                    style={{ background: snap.color }}
+                    style={{ background: theme }}
                     onClick={() => (state.intro = false)}
                   >
                     CUSTOMIZE IT <AiOutlineHighlight size="1.3em" />
@@ -112,25 +115,26 @@ export function Overlay() {
 
 function Customizer() {
   const { decals, setSelectedDecal } = useContext(DecalStateContext);
+  const { theme, setTheme } = useContext(ThemeContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [snap, setSnap] = useState(state);
 
   return (
     <div className="customizer">
       <div className="color-options ">
-        {snap.colors.map((color) => (
+        {colorVariationList.map((color) => (
           <div
             key={color}
             className={`circle`}
             style={{ background: color }}
-            onClick={() => (state.color = color)}
+            onClick={() => setTheme(color)}
           ></div>
         ))}
       </div>
       <div className="decals">
         <div className="decals--container">
           <button
-            style={{ background: snap.color }}
+            style={{ background: theme }}
             onClick={() => setIsModalOpen(true)}
           >
             Upload New Design
@@ -158,7 +162,7 @@ function Customizer() {
       {/* <button style={{ background: snap.color }}>Wear it</button> */}
       <button
         className="share"
-        style={{ background: snap.color }}
+        style={{ background: theme }}
         onClick={() => {
           const link = document.createElement("a");
           link.setAttribute("download", "canvas.png");
@@ -182,7 +186,7 @@ function Customizer() {
       </button>
       <button
         className="exit"
-        style={{ background: snap.color }}
+        style={{ background: theme }}
         onClick={() => (state.intro = true)}
       >
         GO BACK

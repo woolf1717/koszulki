@@ -19,6 +19,7 @@ import { useRef } from "react";
 import { useSnapshot } from "valtio";
 import { TextureLoader } from "three";
 import { DecalStateContext } from "./decalStateContext";
+import { ThemeContext } from "./themeContext";
 
 export const AppCanvas = ({
   position = [0, 0, 2.5],
@@ -117,6 +118,7 @@ function CameraRig({ children }: { children: React.ReactNode }) {
 }
 
 function Shirt(props: any) {
+  const { theme } = useContext(ThemeContext);
   const { decals, selectedDecal } = useContext(DecalStateContext);
   const [selectedDecalUrl, setSelectedDecalUrl] = useState<string>();
 
@@ -127,14 +129,13 @@ function Shirt(props: any) {
     }
   }, [selectedDecal, decals]);
 
-  const snap = useSnapshot(state);
   const texture = selectedDecalUrl
     ? useLoader(TextureLoader, selectedDecalUrl)
     : null;
 
   const { nodes, materials } = useGLTF("/shirt_baked_collapsed.glb");
   useFrame((state, delta) =>
-    easing.dampC(materials.lambert1.color, snap.color, 0.25, delta)
+    easing.dampC(materials.lambert1.color, theme, 0.25, delta)
   );
   return (
     <mesh
