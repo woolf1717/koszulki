@@ -5,7 +5,7 @@ import { ThemeContextProvider } from "./themeContext";
 export const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <ThemeContextProvider>
-      <DecalStateContextProvider>{children}</DecalStateContextProvider>;
+      <DecalStateContextProvider>{children}</DecalStateContextProvider>
     </ThemeContextProvider>
   );
 };
