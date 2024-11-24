@@ -8,16 +8,15 @@ import {
   AiOutlineShopping,
 } from "react-icons/ai";
 import { AnimatePresence, motion } from "framer-motion";
-import { getAllBucket, getBucketElement, getListAll } from "../api";
+import { useContext, useState } from "react";
 
+import { DecalStateContext } from "./decalStateContext";
 import { Logo } from "@pmndrs/branding";
 import { ModalDialog } from "./modalDialog";
+import { ThemeContext } from "./themeContext";
+import { colorVariationList } from "../colorVariationList";
 import { state } from "./store";
 import { useSnapshot } from "valtio";
-import { useContext, useState } from "react";
-import { DecalStateContext } from "./decalStateContext";
-import { colorVariationList } from "../colorVariationList";
-import { ThemeContext } from "./themeContext";
 
 export function Overlay() {
   const { theme } = useContext(ThemeContext);
@@ -137,7 +136,7 @@ function Customizer() {
             style={{ background: theme }}
             onClick={() => setIsModalOpen(true)}
           >
-            Upload New Design
+            Design
           </button>
           <ModalDialog
             isOpen={isModalOpen}

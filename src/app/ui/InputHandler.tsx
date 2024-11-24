@@ -1,8 +1,10 @@
 import { createDecal } from "../api";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { ThemeContext } from "./themeContext";
 
 export const InputHandler = ({ setSnap }: { setSnap: (snap: any) => void }) => {
+  const { theme } = useContext(ThemeContext);
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (event) => {
@@ -30,12 +32,13 @@ export const InputHandler = ({ setSnap }: { setSnap: (snap: any) => void }) => {
   return (
     <div>
       <input type="file" accept="image/*" onChange={handleFileChange} />
-      <div
-        className="bg-yellow-500"
+      <button
+        className="bg-yellow-500 m-4"
         onClick={() => file && handleUploadNewDesign(file)}
+        style={{ background: theme }}
       >
         UPLOAD DESIGN
-      </div>
+      </button>
     </div>
   );
 };
