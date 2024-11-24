@@ -1,7 +1,7 @@
-import { createDecal } from "../api";
-
 import { useContext, useState } from "react";
+
 import { ThemeContext } from "./themeContext";
+import { createDecal } from "../api";
 
 export const InputHandler = ({ setSnap }: { setSnap: (snap: any) => void }) => {
   const { theme } = useContext(ThemeContext);
@@ -9,11 +9,27 @@ export const InputHandler = ({ setSnap }: { setSnap: (snap: any) => void }) => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+    // resolution check
+    if (file) {
+      const img = new Image();
+      img.src = window.URL.createObjectURL(file);
+      img.onload = function () {
+        const width = img.naturalWidth;
+        const height = img.naturalHeight;
+
+        if (width > 1000 || height > 1000) {
+          alert("Image resolution should not exceed 1000x1000.");
+          return;
+        }
+      };
+    }
+
+    console.log(file);
+    if (file.type !== "image/png" && file.type !== "image/jpeg") {
+      alert("Please select a PNG or JPEG image file.");
+      return;
+    }
     setFile(file);
-    // if (file.type !== "image/png" && file.type !== "image/jpeg") {
-    //   alert("Please select a PNG or JPEG image file.");
-    //   return;
-    // }
 
     // if (file.size > 1024 * 1024) {
     //   alert("File size should not exceed 1MB.");
